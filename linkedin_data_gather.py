@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 ###
 #
 # Input: database, collection, linkedin url field
@@ -15,6 +18,7 @@
 import sys
 import pymongo
 from pymongo import MongoClient
+from pymongo import ReplicaSetConnection
 from bson.objectid import ObjectId
 import urllib2
 from bs4 import BeautifulSoup
@@ -30,7 +34,8 @@ if __name__ == '__main__':
   linkedin_url_field = sys.argv[3]
 
   # Connect to the database
-  client = MongoClient()
+  # client = MongoClient()
+  client = ReplicaSetConnection('localhost:27017', replicaSet='rep01')
   db = client[db_to_use]
   collection = db[collection_to_use]
 
@@ -92,5 +97,7 @@ if __name__ == '__main__':
         print "Sorry, I couldn't update the database because ", sys.exc_info()[0]
         raise
 
-      # Let's not get banned by LI. Pause for 15 seconds
-      time.sleep(15)
+      # Let's not get banned by LI. Pause for 15 seconds plus some random number of milliseconds
+      sleep_time = 15 + decimal.Decimal(str(random.random()))
+
+      time.sleep(sleep_time)
